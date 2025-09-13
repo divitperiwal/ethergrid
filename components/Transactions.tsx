@@ -19,6 +19,7 @@ const Transactions = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [visibleCount, setVisibleCount] = useState(8);
   const fetchTransactions = async () => {
+    if(!account) return;
     const transactions = await getAllTransactions();
     setTransactions(transactions || []);
   };

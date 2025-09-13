@@ -35,7 +35,6 @@ const Welcome = () => {
   const { account } = useWalletStore();
 
   useEffect(() => {
-    checkNetwork();
     checkIfWalletConnected();
   }, []);
 
