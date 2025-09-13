@@ -1,9 +1,10 @@
 # [Ethergrid 🚀](ethergrid.vercel.app) [(ethergrid.vercel.app)](ethergrid.vercel.app)
 
-<img width="1919" height="1079" alt="Screenshot 2025-09-12 010015" src="https://github.com/user-attachments/assets/f48b2d22-57a6-4568-b11b-6775ef90b21a" />
+<img width="1919" height="1079" alt="Screenshot 2025-09-12 015303" src="https://github.com/user-attachments/assets/94397ae9-3463-4088-8a58-036d20d775e5" />
 
 
-**Ethergrid* is a modern, fast, and secure crypto wallet web app that lets you store, send, and receive Ethereum effortlessly. Built with **Next.js**, **Tailwind CSS**, **Ethers.js**, and a **Solidity smart contract**, it provides a sleek UI and fun transaction experience with GIFs and keywords.
+
+**Ethergrid** is a modern, fast, and secure crypto wallet web app that lets you store, send, and receive Ethereum effortlessly. Built with **Next.js**, **Tailwind CSS**, **Ethers.js**, and a **Solidity smart contract**, it provides a sleek UI and fun transaction experience with GIFs and keywords.
 
 ---
 
