@@ -128,7 +128,7 @@ export async function sendTransaction() {
 
     await transactionHash.wait();
     setIsLoading(false);
-    showSuccessToast(`Transaction Successful ${transactionHash} `);
+    showSuccessToast(`Transaction Successful`);
     const TransactionCount = await transactionContract?.getTransactionCount();
     setTransactionCount(TransactionCount);
     setTimeout(() => {
