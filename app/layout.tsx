@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Open_Sans } from "next/font/google";
+import { Toaster } from "react-hot-toast";
 import "./globals.css";
 
 const opensans = Open_Sans({
@@ -22,8 +23,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <body className={`${opensans.className} antialiased`}>
+        {children}
+        <Toaster
+          position="bottom-right"
+          reverseOrder={false}
 
-      <body className={`${opensans.className} antialiased`}>{children}</body>
+          toastOptions={{ duration: 4000 }}
+        />
+      </body>
     </html>
   );
 }

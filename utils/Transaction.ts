@@ -2,12 +2,23 @@ import { ethers } from "ethers";
 import { contractABI, contractAddress } from "./constant";
 import { useWalletStore } from "@/store/UseWalletStore";
 import { useTransferStore } from "@/store/useTransferStore";
+import toast from "react-hot-toast";
 
-
+export async function checkNetwork() {
+  if (!window.ethereum) return toast.error("Please install Metamask");
+  const provider = new ethers.BrowserProvider(window.ethereum);
+  const chainID = (await provider.getNetwork()).chainId.toString();
+  if (chainID === "11155111") {
+    return true;
+  }
+  toast.error("Please switch to Sepolia Test Network");
+  return false;
+}
 
 export async function getEthereumContract() {
-  if (!window.ethereum) throw new Error("Metamask not found");
-  
+  const network = await checkNetwork();
+  if (!network) return;
+
   const { setProvider, setSigner, setContract } = useWalletStore.getState();
   const provider = new ethers.BrowserProvider(window.ethereum);
   const signer = await provider.getSigner();
@@ -24,10 +35,12 @@ export async function checkIfWalletConnected() {
   const { setAccount } = useWalletStore.getState();
   try {
     const { ethereum } = window;
-    if (!ethereum) return alert("Please install Metamask");
+    if (!ethereum) return toast.error("Please install Metamask");
     const accounts = await ethereum.request({ method: "eth_accounts" });
 
     if (accounts.length) {
+      const network = await checkNetwork();
+      if (!network) return;
       setAccount(accounts[0]);
     } else {
       console.log("No accounts found!");
@@ -41,11 +54,13 @@ export async function connectWallet() {
   const { setAccount, setProvider, setSigner } = useWalletStore.getState();
   try {
     const { ethereum } = window;
-    if (!ethereum) return alert("Please install Metamask");
+    if (!ethereum) return toast.error("Please install Metamask");
     const accounts = await ethereum.request({
       method: "eth_requestAccounts",
     });
     if (accounts.length > 0) {
+      const network = await checkNetwork();
+      if (!network) return;
       const account = accounts[0];
       const provider = new ethers.BrowserProvider(ethereum);
       const signer = await provider.getSigner();
@@ -59,7 +74,7 @@ export async function connectWallet() {
   }
 }
 
-export async function disconnectWallet(){
+export async function disconnectWallet() {
   const { setAccount, setProvider, setSigner } = useWalletStore.getState();
   setAccount(null);
   setProvider(null);
@@ -75,10 +90,12 @@ export async function sendTransaction() {
     setIsLoading,
   } = useTransferStore.getState();
   const { account } = useWalletStore.getState();
-  
+
   try {
     const { ethereum } = window;
-    if (!ethereum) return alert("Please install Metamask");
+    if (!ethereum) return toast.error("Please install Metamask");
+    const network = await checkNetwork();
+    if (!network) return;
     const transactionContract = await getEthereumContract();
     const parsedEther = ethers.parseEther(amount.toString());
 
@@ -96,20 +113,23 @@ export async function sendTransaction() {
       ],
     });
 
-    const transactionHash = await transactionContract.addToBlockchain(
+    const transactionHash = await transactionContract?.addToBlockchain(
       recipient,
       parsedEther,
       message,
       keyword
     );
-    
+
     await transactionHash.wait();
     setIsLoading(false);
-    console.log("Success");
-    const TransactionCount = await transactionContract.getTransactionCount();
+    toast.success(`Transaction Successful ${transactionHash} `);
+    const TransactionCount = await transactionContract?.getTransactionCount();
     setTransactionCount(TransactionCount);
+    setTimeout(() => {
+      window.location.reload();
+    }, 4000);
 
-    window.location.reload();
+
   } catch (error) {
     console.error("Error : ", error);
   }
@@ -121,7 +141,7 @@ export async function getAllTransactions() {
       const transactionContract = await getEthereumContract();
 
       const availableTransactions =
-        await transactionContract.getAllTransaction();
+        await transactionContract?.getAllTransaction();
 
       const transactionList = availableTransactions.map((transaction: any) => ({
         receiver: transaction.receiver,

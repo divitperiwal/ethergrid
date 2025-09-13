@@ -12,10 +12,12 @@ import {
   connectWallet,
   sendTransaction,
   disconnectWallet,
+  checkNetwork,
 } from "@/utils/Transaction";
 import { AiFillPlayCircle } from "react-icons/ai";
 import { MdLogout } from "react-icons/md";
 import Link from "next/link";
+import {toast} from "react-hot-toast";
 
 const Welcome = () => {
   const {
@@ -33,12 +35,13 @@ const Welcome = () => {
   const { account } = useWalletStore();
 
   useEffect(() => {
+    checkNetwork();
     checkIfWalletConnected();
   }, []);
 
   const handleSubmit = async () => {
     const isValid = !recipient || !amount || !keyword || !message;
-    if (isValid) return alert("Please enter all the details");
+    if (isValid) return toast.error("Please fill all the fields");
     await sendTransaction();
   };
 
@@ -58,8 +61,7 @@ const Welcome = () => {
             </span>
           </h1>
           <p className="mt-6 text-gray-300 text-lg max-w-md leading-relaxed">
-            Explore Web3 with a seamless crypto experience. Buy, send and trade
-            with ease on
+            Explore Web3 with a seamless crypto experience. Send and view details with ease on
             <span className="text-purple-400 font-semibold"> Ethergrid</span>.
           </p>
 
