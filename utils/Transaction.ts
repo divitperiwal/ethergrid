@@ -2,16 +2,19 @@ import { ethers } from "ethers";
 import { contractABI, contractAddress } from "./constant";
 import { useWalletStore } from "@/store/UseWalletStore";
 import { useTransferStore } from "@/store/useTransferStore";
-import toast from "react-hot-toast";
+import { showErrorToast, showSuccessToast } from "./utils";
+
+
+
 
 export async function checkNetwork() {
-  if (!window.ethereum) return toast.error("Please install Metamask");
+  if (!window.ethereum) return showSuccessToast("Please install Metamask");
   const provider = new ethers.BrowserProvider(window.ethereum);
   const chainID = (await provider.getNetwork()).chainId.toString();
   if (chainID === "11155111") {
     return true;
   }
-  toast.error("Please switch to Sepolia Test Network");
+  showErrorToast("Please switch to Sepolia Test Network");
   return false;
 }
 
@@ -35,15 +38,16 @@ export async function checkIfWalletConnected() {
   const { setAccount } = useWalletStore.getState();
   try {
     const { ethereum } = window;
-    if (!ethereum) return toast.error("Please install Metamask");
+    if (!ethereum) return showErrorToast("Please install Metamask");
     const accounts = await ethereum.request({ method: "eth_accounts" });
 
     if (accounts.length) {
       const network = await checkNetwork();
       if (!network) return;
       setAccount(accounts[0]);
+      showSuccessToast("Wallet is connected");
     } else {
-      console.log("No accounts found!");
+      showErrorToast("No Accounts found")
     }
   } catch (error) {
     console.error(error);
@@ -54,7 +58,7 @@ export async function connectWallet() {
   const { setAccount, setProvider, setSigner } = useWalletStore.getState();
   try {
     const { ethereum } = window;
-    if (!ethereum) return toast.error("Please install Metamask");
+    if (!ethereum) return showErrorToast("Please install Metamask");
     const accounts = await ethereum.request({
       method: "eth_requestAccounts",
     });
@@ -68,6 +72,7 @@ export async function connectWallet() {
       setAccount(account);
       setProvider(provider);
       setSigner(signer);
+      showSuccessToast("Wallet connected successfully");
     }
   } catch (error) {
     console.error("Error : ", error);
@@ -79,6 +84,7 @@ export async function disconnectWallet() {
   setAccount(null);
   setProvider(null);
   setSigner(null);
+  showSuccessToast("Wallet disconnected successfully");
 }
 export async function sendTransaction() {
   const {
@@ -93,7 +99,7 @@ export async function sendTransaction() {
 
   try {
     const { ethereum } = window;
-    if (!ethereum) return toast.error("Please install Metamask");
+    if (!ethereum) return showErrorToast("Please install Metamask");
     const network = await checkNetwork();
     if (!network) return;
     const transactionContract = await getEthereumContract();
@@ -122,7 +128,7 @@ export async function sendTransaction() {
 
     await transactionHash.wait();
     setIsLoading(false);
-    toast.success(`Transaction Successful ${transactionHash} `);
+    showSuccessToast(`Transaction Successful ${transactionHash} `);
     const TransactionCount = await transactionContract?.getTransactionCount();
     setTransactionCount(TransactionCount);
     setTimeout(() => {

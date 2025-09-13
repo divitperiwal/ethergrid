@@ -17,7 +17,7 @@ import {
 import { AiFillPlayCircle } from "react-icons/ai";
 import { MdLogout } from "react-icons/md";
 import Link from "next/link";
-import {toast} from "react-hot-toast";
+import { showErrorToast } from "@/utils/utils";
 
 const Welcome = () => {
   const {
@@ -41,7 +41,7 @@ const Welcome = () => {
 
   const handleSubmit = async () => {
     const isValid = !recipient || !amount || !keyword || !message;
-    if (isValid) return toast.error("Please fill all the fields");
+    if (isValid) return showErrorToast("Please fill all the fields");
     await sendTransaction();
   };
 
